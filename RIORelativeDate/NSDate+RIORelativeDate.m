@@ -67,9 +67,14 @@
         return NSLocalizedStringFromTable(@"Next year", @"RIORelativeDate", nil);
     }
     
-    // Older
+    // Out of range
     else {
-        return NSLocalizedStringFromTable(@"Older", @"RIORelativeDate", nil);
+        if ([self compare:date] == NSOrderedAscending) {
+            return NSLocalizedStringFromTable(@"Older", @"RIORelativeDate", nil);
+        }
+        else {
+            return NSLocalizedStringFromTable(@"Newer", @"RIORelativeDate", nil);
+        }
     }
 }
 
