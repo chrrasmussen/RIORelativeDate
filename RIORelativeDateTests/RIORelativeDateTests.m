@@ -12,12 +12,12 @@
 
 #define RIOAssertDate(YEAR, MONTH, DAY, EXPECTED_RESULT) \
 do { \
-    NSDateComponents *todayComponents = [[NSDateComponents alloc] init]; \
-    todayComponents.year = YEAR; \
-    todayComponents.month = MONTH; \
-    todayComponents.day = DAY; \
-    NSDate *date = [self.gregorian dateFromComponents:todayComponents]; \
-    STAssertEqualObjects([date relativeDateDescriptionRelativeToDate:self.today inCalendar:self.gregorian], EXPECTED_RESULT, nil); \
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init]; \
+    dateComponents.year = YEAR; \
+    dateComponents.month = MONTH; \
+    dateComponents.day = DAY; \
+    NSDate *date = [self.calendar dateFromComponents:dateComponents]; \
+    STAssertEqualObjects([date relativeDateDescriptionRelativeToDate:self.date inCalendar:self.calendar], EXPECTED_RESULT, nil); \
 } while (0);
 
 
@@ -28,14 +28,14 @@ do { \
     [super setUp];
     
     // Set-up code here.
-    self.gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    self.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     // Choosing an arbitrary date (Norwegian Constitution Day in this case)
-    NSDateComponents *todayComponents = [[NSDateComponents alloc] init];
-    todayComponents.year = 2000;
-    todayComponents.month = 5;
-    todayComponents.day = 17;
-    self.today = [self.gregorian dateFromComponents:todayComponents];
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+    dateComponents.year = 2000;
+    dateComponents.month = 5;
+    dateComponents.day = 17;
+    self.date = [self.calendar dateFromComponents:dateComponents];
 }
 
 - (void)tearDown

@@ -10,7 +10,7 @@
 
 @interface RIORelativeDateTests : SenTestCase
 
-@property (nonatomic, strong) NSCalendar *gregorian;
-@property (nonatomic, strong) NSDate *today;
+@property (nonatomic, strong) NSCalendar *calendar;
+@property (nonatomic, strong) NSDate *date;
 
 @end
