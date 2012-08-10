@@ -10,11 +10,15 @@
 #import "RIORelativeDate.h"
 
 
-typedef struct {
-    NSInteger year;
-    NSInteger month;
-    NSInteger day;
-} RIODateComponents;
+#define RIOAssertDate(YEAR, MONTH, DAY, EXPECTED_RESULT) \
+do { \
+    NSDateComponents *todayComponents = [[NSDateComponents alloc] init]; \
+    todayComponents.year = YEAR; \
+    todayComponents.month = MONTH; \
+    todayComponents.day = DAY; \
+    NSDate *date = [self.gregorian dateFromComponents:todayComponents]; \
+    STAssertEqualObjects([date relativeDateDescriptionRelativeToDate:self.today inCalendar:self.gregorian], EXPECTED_RESULT, nil); \
+} while (0);
 
 
 @implementation RIORelativeDateTests
@@ -27,7 +31,11 @@ typedef struct {
     self.gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     // Choosing an arbitrary date (Norwegian Constitution Day in this case)
-    self.today = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
+    NSDateComponents *todayComponents = [[NSDateComponents alloc] init];
+    todayComponents.year = 2000;
+    todayComponents.month = 5;
+    todayComponents.day = 17;
+    self.today = [self.gregorian dateFromComponents:todayComponents];
 }
 
 - (void)tearDown
@@ -42,44 +50,17 @@ typedef struct {
 
 - (void)testToday
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
-    STAssertTrue([date isTodayRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 16}];
-    STAssertFalse([date isTodayRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 18}];
-    STAssertFalse([date isTodayRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 17, @"Today");
 }
 
 - (void)testYesterday
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 16}];
-    STAssertTrue([date isYesterdayRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 15}];
-    STAssertFalse([date isYesterdayRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
-    STAssertFalse([date isYesterdayRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 16, @"Yesterday");
 }
 
 - (void)testTomorrow
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 18}];
-    STAssertTrue([date isTomorrowRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
-    STAssertFalse([date isTomorrowRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 19}];
-    STAssertFalse([date isTomorrowRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 18, @"Tomorrow");
 }
 
 
@@ -87,198 +68,81 @@ typedef struct {
 
 - (void)testThisWeek
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
-    STAssertTrue([date isThisWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 14}];
-    STAssertTrue([date isThisWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 13}];
-    STAssertFalse([date isThisWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 20}];
-    STAssertTrue([date isThisWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 21}];
-    STAssertFalse([date isThisWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 14, @"This week");
+    RIOAssertDate(2000, 5, 20, @"This week");
 }
 
 - (void)testLastWeek
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 10}];
-    STAssertTrue([date isLastWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 7}];
-    STAssertTrue([date isLastWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 6}];
-    STAssertFalse([date isLastWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 13}];
-    STAssertTrue([date isLastWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 14}];
-    STAssertFalse([date isLastWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 10, @"Last week");
+    RIOAssertDate(2000, 5, 7, @"Last week");
+    RIOAssertDate(2000, 5, 13, @"Last week");
 }
 
 - (void)testNextWeek
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 24}];
-    STAssertTrue([date isNextWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 21}];
-    STAssertTrue([date isNextWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 20}];
-    STAssertFalse([date isNextWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 27}];
-    STAssertTrue([date isNextWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 28}];
-    STAssertFalse([date isNextWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 24, @"Next week");
+    RIOAssertDate(2000, 5, 21, @"Next week");
+    RIOAssertDate(2000, 5, 27, @"Next week");
 }
+
 
 #pragma mark - Month
 
 - (void)testThisMonth
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
-    STAssertTrue([date isThisMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 1}];
-    STAssertTrue([date isThisMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 4, 30}];
-    STAssertFalse([date isThisMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 31}];
-    STAssertTrue([date isThisMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 6, 1}];
-    STAssertFalse([date isThisMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 5, 1, @"This month");
+    RIOAssertDate(2000, 5, 31, @"This month");
 }
 
 - (void)testLastMonth
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 4, 17}];
-    STAssertTrue([date isLastMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 4, 1}];
-    STAssertTrue([date isLastMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 3, 31}];
-    STAssertFalse([date isLastMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 4, 30}];
-    STAssertTrue([date isLastMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 1}];
-    STAssertFalse([date isLastMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 4, 1, @"Last month");
+    RIOAssertDate(2000, 4, 17, @"Last month");
+    RIOAssertDate(2000, 4, 30, @"Last month");
 }
 
 - (void)testNextMonth
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 6, 17}];
-    STAssertTrue([date isNextMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 6, 1}];
-    STAssertTrue([date isNextMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 31}];
-    STAssertFalse([date isNextMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 6, 30}];
-    STAssertTrue([date isNextMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 7, 1}];
-    STAssertFalse([date isNextMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 6, 1, @"Next month");
+    RIOAssertDate(2000, 6, 17, @"Next month");
+    RIOAssertDate(2000, 6, 30, @"Next month");
 }
+
 
 #pragma mark - Year
 
 - (void)testThisYear
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
-    STAssertTrue([date isThisYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 1, 1}];
-    STAssertTrue([date isThisYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){1999, 12, 31}];
-    STAssertFalse([date isThisYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 12, 31}];
-    STAssertTrue([date isThisYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2001, 1, 1}];
-    STAssertFalse([date isThisYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2000, 1, 1, @"This year");
+    RIOAssertDate(2000, 12, 31, @"This year");
 }
 
 - (void)testLastYear
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){1999, 5, 17}];
-    STAssertTrue([date isLastYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){1999, 4, 30}];
-    STAssertTrue([date isLastYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){1998, 12, 31}];
-    STAssertFalse([date isLastYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){1999, 12, 31}];
-    STAssertTrue([date isLastYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 1, 1}];
-    STAssertFalse([date isLastYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(1999, 1, 1, @"Last year");
+    RIOAssertDate(1999, 5, 17, @"Last year");
+    RIOAssertDate(1999, 12, 31, @"Last year");
 }
 
 - (void)testNextYear
 {
-    NSDate *date = nil;
-    
-    date = [self dateWithComponents:(RIODateComponents){2001, 5, 17}];
-    STAssertTrue([date isNextYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2001, 1, 1}];
-    STAssertTrue([date isNextYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2000, 12, 31}];
-    STAssertFalse([date isNextYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2001, 12, 31}];
-    STAssertTrue([date isNextYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
-    
-    date = [self dateWithComponents:(RIODateComponents){2002, 1, 1}];
-    STAssertFalse([date isNextYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    RIOAssertDate(2001, 1, 1, @"Next year");
+    RIOAssertDate(2001, 5, 17, @"Next year");
+    RIOAssertDate(2001, 12, 31, @"Next year");
 }
 
 
-#pragma mark - Private methods
+#pragma mark - Out of range
 
-- (NSDate *)dateWithComponents:(RIODateComponents)dateComponents
+- (void)testOlder
 {
-    NSDateComponents *todayComponents = [[NSDateComponents alloc] init];
-    todayComponents.year = dateComponents.year;
-    todayComponents.month = dateComponents.month;
-    todayComponents.day = dateComponents.day;
-    return [self.gregorian dateFromComponents:todayComponents];
+    RIOAssertDate(1998, 12, 31, @"Older");
+}
+
+- (void)testNewer
+{
+    RIOAssertDate(2002, 1, 1, @"Newer");
 }
 
 @end
