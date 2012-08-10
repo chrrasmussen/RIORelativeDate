@@ -1,0 +1,25 @@
+/* 
+  RelativeDate.strings
+  FriendlyLoan
+
+  Created by Christian Rasmussen on 03.10.11.
+  Copyright (c) 2011 Rasmussen I/O. All rights reserved.
+*/
+
+"Today" = "I dag";
+"Yesterday" = "I går";
+"Tomorrow" = "I morgen";
+
+"This week" = "Denne uken";
+"Last week" = "Forrige uke";
+"Next week" = "Neste uke";
+
+"This month" = "Denne måneden";
+"Last month" = "Forrige måned";
+"Next month" = "Neste måned";
+
+"This year" = "I år";
+"Last year" = "I fjor";
+"Next year" = "Neste år";
+
+"Older" = "Eldre";
