@@ -8,10 +8,18 @@
 
 "Today" = "Today";
 "Yesterday" = "Yesterday";
+"Tomorrow" = "Tomorrow";
+
 "This week" = "This week";
 "Last week" = "Last week";
+"Next week" = "Next week";
+
 "This month" = "This month";
 "Last month" = "Last month";
+"Next month" = "Next month";
+
 "This year" = "This year";
 "Last year" = "Last year";
+"Next year" = "Next year";
+
 "Older" = "Older";

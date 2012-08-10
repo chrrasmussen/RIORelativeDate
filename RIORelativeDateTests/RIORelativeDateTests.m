@@ -10,6 +10,13 @@
 #import "RIORelativeDate.h"
 
 
+typedef struct {
+    NSInteger year;
+    NSInteger month;
+    NSInteger day;
+} RIODateComponents;
+
+
 @implementation RIORelativeDateTests
 
 - (void)setUp
@@ -20,11 +27,7 @@
     self.gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     // Choosing a date in the middle of the year
-    NSDateComponents *todayComponents = [[NSDateComponents alloc] init];
-    todayComponents.year = 2000;
-    todayComponents.month = 5;
-    todayComponents.day = 4;
-    self.today = [self.gregorian dateFromComponents:todayComponents];
+    self.today = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
 }
 
 - (void)tearDown
@@ -39,29 +42,19 @@
 
 - (void)testToday
 {
-    STAssertTrue([self.today isTodayRelativeToDate:self.today inCalendar:self.gregorian], nil);
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
+    STAssertTrue([date isTodayRelativeToDate:self.today inCalendar:self.gregorian], nil);
 }
 
 - (void)testYesterday
 {
-    NSDateComponents *components = [[NSDateComponents alloc] init];
-    components.day = -4;
-    NSDate *date = [self.gregorian dateByAddingComponents:components toDate:self.today options:0];
-    
-//    NSDateComponents *diff = [self.gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSWeekOfYearCalendarUnit | NSDayCalendarUnit) fromDate:date];
-//    NSDateComponents *diff2 = [self.gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSWeekOfYearCalendarUnit | NSDayCalendarUnit) fromDate:self.today];
-//    NSLog(@"y:%d m:%d w:%d d:%d", diff.year, diff.month, diff.weekOfYear, diff.day);
-//    NSLog(@"y:%d m:%d w:%d d:%d", diff2.year, diff2.month, diff2.weekOfYear, diff2.day);
-    
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 16}];
     STAssertTrue([date isYesterdayRelativeToDate:self.today inCalendar:self.gregorian], nil);
 }
 
 - (void)testTomorrow
 {
-    NSDateComponents *components = [[NSDateComponents alloc] init];
-    components.day = +1;
-    NSDate *date = [self.gregorian dateByAddingComponents:components toDate:self.today options:0];
-    
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 18}];
     STAssertTrue([date isTomorrowRelativeToDate:self.today inCalendar:self.gregorian], nil);
 }
 
@@ -70,30 +63,72 @@
 
 - (void)testThisWeek
 {
-    
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
+    STAssertTrue([date isThisWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
 }
 
 - (void)testLastWeek
 {
-    
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 10}];
+    STAssertTrue([date isLastWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
 }
 
 - (void)testNextWeek
 {
-    
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 24}];
+    STAssertTrue([date isNextWeekRelativeToDate:self.today inCalendar:self.gregorian], nil);
 }
 
 #pragma mark - Month
 
+- (void)testThisMonth
+{
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
+    STAssertTrue([date isThisMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
+}
+
+- (void)testLastMonth
+{
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 4, 17}];
+    STAssertTrue([date isLastMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
+}
+
+- (void)testNextMonth
+{
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 6, 17}];
+    STAssertTrue([date isNextMonthRelativeToDate:self.today inCalendar:self.gregorian], nil);
+}
+
 #pragma mark - Year
+
+- (void)testThisYear
+{
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2000, 5, 17}];
+    STAssertTrue([date isThisYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
+}
 
 - (void)testLastYear
 {
-//    NSDateComponents *lastYearComponents = [[NSDateComponents alloc] init];
-//    lastYearComponents.year = -1;
-//    NSDate *lastYear = [self.gregorian dateByAddingComponents:lastYearComponents toDate:self.today options:<#(NSUInteger)#>]
-//    
-//    STAssertTrue([lastYear isLastYearComparedToDate:self.today], @"");
+    NSDate *date = [self dateWithComponents:(RIODateComponents){1999, 5, 17}];
+    STAssertTrue([date isLastYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
+}
+
+- (void)testNextYear
+{
+    NSDate *date = [self dateWithComponents:(RIODateComponents){2001, 5, 17}];
+    STAssertTrue([date isNextYearRelativeToDate:self.today inCalendar:self.gregorian], nil);
+}
+
+
+#pragma mark - Private methods
+
+- (NSDate *)dateWithComponents:(RIODateComponents)dateComponents
+{
+    NSDateComponents *todayComponents = [[NSDateComponents alloc] init];
+    todayComponents.year = dateComponents.year;
+    todayComponents.month = dateComponents.month;
+    todayComponents.day = dateComponents.day;
+    return [self.gregorian dateFromComponents:todayComponents];
 }
 
 @end
