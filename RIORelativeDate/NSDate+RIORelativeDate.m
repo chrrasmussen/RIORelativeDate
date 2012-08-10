@@ -13,47 +13,57 @@
 
 - (NSString *)relativeDateDescription
 {
+    return [self relativeDateDescriptionRelativeToDate:[NSDate date]];
+}
+
+- (NSString *)relativeDateDescriptionRelativeToDate:(NSDate *)date
+{
+    return [self relativeDateDescriptionRelativeToDate:date inCalendar:[NSCalendar currentCalendar]];
+}
+
+- (NSString *)relativeDateDescriptionRelativeToDate:(NSDate *)date inCalendar:(NSCalendar *)calendar
+{
     // Day
-    if ([self isToday]) {
+    if ([self isTodayRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Today", @"RIORelativeDate", nil);
     }
-    else if ([self isYesterday]) {
+    else if ([self isYesterdayRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Yesterday", @"RIORelativeDate", nil);
     }
-    else if ([self isTomorrow]) {
+    else if ([self isTomorrowRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Tomorrow", @"RIORelativeDate", nil);
     }
     
     // Week
-    else if ([self isThisWeek]) {
+    else if ([self isThisWeekRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"This week", @"RIORelativeDate", nil);
     }
-    else if ([self isLastWeek]) {
+    else if ([self isLastWeekRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Last week", @"RIORelativeDate", nil);
     }
-    else if ([self isNextWeek]) {
+    else if ([self isNextWeekRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Next week", @"RIORelativeDate", nil);
     }
     
     // Month
-    else if ([self isThisMonth]) {
+    else if ([self isThisMonthRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"This month", @"RIORelativeDate", nil);
     }
-    else if ([self isLastMonth]) {
+    else if ([self isLastMonthRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Last month", @"RIORelativeDate", nil);
     }
-    else if ([self isNextMonth]) {
+    else if ([self isNextMonthRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Next month", @"RIORelativeDate", nil);
     }
     
     // Year
-    else if ([self isThisYear]) {
+    else if ([self isThisYearRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"This year", @"RIORelativeDate", nil);
     }
-    else if ([self isLastYear]) {
+    else if ([self isLastYearRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Last year", @"RIORelativeDate", nil);
     }
-    else if ([self isNextYear]) {
+    else if ([self isNextYearRelativeToDate:date inCalendar:calendar]) {
         return NSLocalizedStringFromTable(@"Next year", @"RIORelativeDate", nil);
     }
     
@@ -62,6 +72,7 @@
         return NSLocalizedStringFromTable(@"Older", @"RIORelativeDate", nil);
     }
 }
+
 
 #pragma mark - Day
 
@@ -179,68 +190,6 @@
     NSDate *targetDate = [calendar dateByAddingComponents:targetComponents toDate:date options:0];
     
     return [self isThisYearRelativeToDate:targetDate inCalendar:calendar];
-}
-
-#pragma mark - Convenience methods
-
-- (BOOL)isToday
-{
-    return [self isTodayRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isYesterday
-{
-    return [self isYesterdayRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isTomorrow
-{
-    return [self isTomorrowRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isThisWeek
-{
-    return [self isThisWeekRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isLastWeek
-{
-    return [self isLastWeekRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isNextWeek
-{
-    return [self isNextWeekRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isThisMonth
-{
-    return [self isThisMonthRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isLastMonth
-{
-    return [self isLastMonthRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isNextMonth
-{
-    return [self isNextMonthRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isThisYear
-{
-    return [self isThisYearRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isLastYear
-{
-    return [self isLastYearRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
-}
-
-- (BOOL)isNextYear
-{
-    return [self isNextYearRelativeToDate:[NSDate date] inCalendar:[NSCalendar currentCalendar]];
 }
 
 @end
